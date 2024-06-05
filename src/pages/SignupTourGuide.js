@@ -91,7 +91,7 @@ const useSignup = (initialState) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await axios.post("api-link", formData);
+      const response = await axios.post("http://localhost:8080/api/tour-guide/register/tour/guide", formData);
       console.log("Signup successful:", response.data);
     } catch (error) {
       console.error("Signup failed:", error);
@@ -132,9 +132,10 @@ export default ({
       password: "",
       confirmPassword: "",
       phoneNumber: "",
-      location: "",
+      locationOrigin: "",
       price:"",
-      description: ""
+      description: "",
+      role: ['TOURGUIDE']
     });
 
   return (
@@ -231,8 +232,8 @@ export default ({
                       onChange={handleChange}
                     />
                       <select
-                      name="location"
-                      value={formData.location}
+                      name="language"
+                      value={formData.language}
                       onChange={handleChange}
                       tw="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 mt-5"
                     >

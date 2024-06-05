@@ -21,9 +21,9 @@ const TabContent = tw(
   motion.div
 )`mt-6 flex flex-wrap sm:-mr-10 md:-mr-6 lg:-mr-12`;
 const CardContainer = tw.div`mt-10 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 sm:pr-10 md:pr-6 lg:pr-12`;
-const Card = tw(
-  motion.a
-)`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`;
+const Card = styled(motion.div)`
+  ${tw`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`}
+`;
 const CardImageContainer = styled.div`
   ${(props) =>
     css`
@@ -77,7 +77,8 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("api-link");
+      const response = await axios.get("http://localhost:8080/api/location/list");
+      console.log(response.data)
       setCards(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -110,49 +111,51 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
 
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  // console.log(indexOfFirstCard, indexOfLastCard);
   const currentCards = isSearching
     ? searchResults.slice(indexOfFirstCard, indexOfLastCard)
     : cards.slice(indexOfFirstCard, indexOfLastCard);
-
+  console.log(currentCards)
   const renderCards = () => {
     return currentCards.map((card, index) => (
       <CardContainer key={index}>
         <Card
           className="group"
-          href={card.url}
           initial="rest"
           whileHover="hover"
           animate="rest"
         >
-          <CardImageContainer imageSrc={card.imageSrc}>
-            <CardRatingContainer>
-              <CardRating>
-                <StarIcon />
-                {card.rating}
-              </CardRating>
-              <CardReview>({card.reviews})</CardReview>
-            </CardRatingContainer>
-            <CardHoverOverlay
-              variants={{
-                hover: {
-                  opacity: 1,
-                  height: "auto",
-                },
-                rest: {
-                  opacity: 0,
-                  height: 0,
-                },
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              <CardButton>Book Now</CardButton>
-            </CardHoverOverlay>
-          </CardImageContainer>
-          <CardText>
-            <CardTitle>{card.placeName}</CardTitle>
-            <CardContent>{card.cityName}</CardContent>
-            <CardPrice>From ${card.price}</CardPrice>
-          </CardText>
+          <a href={card.url}>
+            <CardImageContainer imageSrc={card.imageSrc}>
+              <CardRatingContainer>
+                <CardRating>
+                  <StarIcon />
+                  {card.star}
+                </CardRating>
+                <CardReview>({card.total})</CardReview>
+              </CardRatingContainer>
+              <CardHoverOverlay
+                variants={{
+                  hover: {
+                    opacity: 1,
+                    height: "auto",
+                  },
+                  rest: {
+                    opacity: 0,
+                    height: 0,
+                  },
+                }}
+                transition={{ duration: 0.3 }}
+              >
+                <CardButton>Book Now</CardButton>
+              </CardHoverOverlay>
+            </CardImageContainer>
+            <CardText>
+              <CardTitle>{card.location.cityName}</CardTitle>
+              <CardContent>{card.location.cityState}</CardContent>
+              <CardPrice>From ${card.price}</CardPrice>
+            </CardText>
+          </a>
         </Card>
       </CardContainer>
     ));

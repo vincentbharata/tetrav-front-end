@@ -48,7 +48,7 @@ export default ({
 
   useEffect(() => {
     axios
-      .get("api-link")
+      .get("http://localhost:8080/api/review/list")
       .then((response) => {
         setTestimonials(response.data);
       })
@@ -105,9 +105,9 @@ export default ({
                     <Customer>
                       <CustomerProfilePicture
                         src={testimonial.profileImageSrc}
-                        alt={testimonial.customerName}
+                        alt={testimonial.user.userName}
                       />
-                      <CustomerText>{testimonial.customerName}</CustomerText>
+                      <CustomerText>{testimonial.user.username}</CustomerText>
                       <CardRatingContainer>
                         <CardRating>
                           <StarIcon />
