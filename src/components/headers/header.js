@@ -86,7 +86,7 @@ export default ({
       </NavLink>
       <PrimaryLink
         css={roundedHeaderButton && tw`rounded-full`}
-        href="/sign-up-tourist"
+        href="/signup-tourist"
       >
         Sign Up
       </PrimaryLink>

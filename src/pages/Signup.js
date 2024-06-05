@@ -86,6 +86,7 @@ export default ({
     useSignup({
       firstName: "",
       lastName: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -123,6 +124,13 @@ export default ({
                   </InputContainer>
                 </MiniForm>
                 <Form onSubmit={handleSubmit}>
+                <Input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    value={formData.username}
+                    onChange={handleChange}
+                  />
                   <Input
                     type="email"
                     name="email"

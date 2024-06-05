@@ -79,7 +79,7 @@ export default ({ roundedHeaderButton }) => {
           <Features
             heading={
               <>
-                We have Amazing <HighlightedText>Features.</HighlightedText>
+                We Have <HighlightedText>Amazing</HighlightedText> Features.
               </>
             }
           />
@@ -87,7 +87,7 @@ export default ({ roundedHeaderButton }) => {
           <TourGuide
             heading={
               <>
-                Our<HighlightedText> TOP 3 </HighlightedText>Tour Guides
+                Meet Your<HighlightedText> Tour Guides </HighlightedText>
               </>
             }
           />

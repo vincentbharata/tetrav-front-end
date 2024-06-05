@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
@@ -8,6 +8,7 @@ import illustration from "images/login-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
 import axios from "axios";
+import { LoginContext } from "helpers/LoginContext";
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -41,18 +42,20 @@ const Login = ({
   headingText = "Login To Tetrav",
   submitButtonText = "Sign In",
   SubmitButtonIcon = LoginIcon,
-  signupUrl = "/sign-up-tourist",
+  signupUrl = "/signup-tourist",
 }) => {
-  const [email, setEmail] = useState("");
+  const { saveLoginData } = useContext(LoginContext);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await axios.post('api_link', {
-        email,
+        username,
         password
       });
+      saveLoginData(response.data);
       console.log('Login successful:', response.data);
     } catch (error) {
       console.error('Login failed:', error);
@@ -72,10 +75,10 @@ const Login = ({
               <FormContainer>
                 <Form onSubmit={handleSubmit}>
                   <Input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                   <Input
                     type="password"

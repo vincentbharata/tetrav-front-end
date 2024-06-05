@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -12,7 +13,6 @@ import { ReactComponent as SvgDecoratorBlob2 } from "images/svg-decorator-blob-7
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import HeaderPage from "components/headers/header.js";
 import Footer from "components/footers/PageFooter.js";
-
 
 const HeaderContainer = tw.div`text-center`;
 const Header = tw(SectionHeading)``;
@@ -62,206 +62,27 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
 const PaginationContainer = tw.div`flex mt-8 justify-center`;
 const PageNumber = tw.span`cursor-pointer select-none px-3 py-1 mx-1 rounded-full text-gray-800 bg-gray-200 hover:bg-gray-300`;
 
-const cards = [
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Taman Nasional Bromo",
-    placeLocation: "Probolinggo, Jawa Timur",
-    price: "  30",
-    rating: "4.8",
-    reviews: "120",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Kawah Ijen",
-    placeLocation: "Banyuwangi, Jawa Timur",
-    price: "  100",
-    rating: "4.7",
-    reviews: "98",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pantai Kuta",
-    placeLocation: "Bali",
-    price: " 20",
-    rating: "4.5",
-    reviews: "150",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Gunung Rinjani",
-    placeLocation: "Lombok, Nusa Tenggara Barat",
-    price: "  150",
-    rating: "4.9",
-    reviews: "110",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Candi Borobudur",
-    placeLocation: "Magelang, Jawa Tengah",
-    price: "  30",
-    rating: "4.8",
-    reviews: "135",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pantai Sanur",
-    placeLocation: "Bali",
-    price: " 20",
-    rating: "4.4",
-    reviews: "102",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Gunung Merapi",
-    placeLocation: "Yogyakarta, Jawa Tengah",
-    price: "  25",
-    rating: "4.7",
-    reviews: "105",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pulau Tidung",
-    placeLocation: "Kepulauan Seribu, Jakarta",
-    price: "  200",
-    rating: "4.5",
-    reviews: "92",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Taman Safari Indonesia",
-    placeLocation: "Bogor, Jawa Barat",
-    price: "  250",
-    rating: "4.6",
-    reviews: "125",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Dieng Plateau",
-    placeLocation: "Wonosobo, Jawa Tengah",
-    price: "  50",
-    rating: "4.7",
-    reviews: "95",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pulau Menjangan",
-    placeLocation: "Bali",
-    price: "  200",
-    rating: "4.8",
-    reviews: "110",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Candi Borobudur",
-    placeLocation: "Magelang, Jawa Tengah",
-    price: "  30",
-    rating: "4.8",
-    reviews: "135",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pantai Sanur",
-    placeLocation: "Bali",
-    price: " 20",
-    rating: "4.4",
-    reviews: "102",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Gunung Merapi",
-    placeLocation: "Yogyakarta, Jawa Tengah",
-    price: "  25",
-    rating: "4.7",
-    reviews: "105",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pulau Tidung",
-    placeLocation: "Kepulauan Seribu, Jakarta",
-    price: "  200",
-    rating: "4.5",
-    reviews: "92",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Taman Safari Indonesia",
-    placeLocation: "Bogor, Jawa Barat",
-    price: "  250",
-    rating: "4.6",
-    reviews: "125",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Dieng Plateau",
-    placeLocation: "Wonosobo, Jawa Tengah",
-    price: "  50",
-    rating: "4.7",
-    reviews: "95",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Pulau Menjangan",
-    placeLocation: "Bali",
-    price: "  200",
-    rating: "4.8",
-    reviews: "110",
-    url: "#",
-  },
-  {
-    imageSrc:
-      "https://images.unsplash.com/photo-1553194587-b010d08c6c56?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-    placeName: "Wisata Tawangmangu",
-    placeLocation: "Karanganyar, Jawa Tengah",
-    price: "  20",
-    rating: "4.6",
-    reviews: "80",
-    url: "#",
-  },
-];
-
 const AllDestinations = ({ heading = "All Destinations" }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 12;
+  const [cards, setCards] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isNotFound, setIsNotFound] = useState(false);
+  const cardsPerPage = 12;
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("api-link");
+      setCards(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -274,7 +95,7 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
       const filtered = cards.filter(
         (card) =>
           card.placeName.toLowerCase().includes(query.toLowerCase()) ||
-          card.placeLocation.toLowerCase().includes(query.toLowerCase())
+          card.cityName.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(filtered);
       setIsSearching(true);
@@ -329,7 +150,7 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
           </CardImageContainer>
           <CardText>
             <CardTitle>{card.placeName}</CardTitle>
-            <CardContent>{card.placeLocation}</CardContent>
+            <CardContent>{card.cityName}</CardContent>
             <CardPrice>From ${card.price}</CardPrice>
           </CardText>
         </Card>
