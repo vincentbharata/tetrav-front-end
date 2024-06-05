@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -12,22 +12,22 @@ const Heading = tw(SectionHeading)``;
 const Description = tw(SectionDescription)`mx-auto`;
 
 const Posts = tw.div`mt-12 flex flex-wrap -mr-3 relative`;
-const Post = tw.a`flex flex-col h-full bg-gray-200 rounded`;
+const Post = tw.a`flex flex-col h-full bg-gray-200 rounded overflow-hidden shadow-lg transition duration-300 transform hover:scale-105`;
 const PostImage = styled.div`
   ${(props) =>
     css`
       background-image: url("${props.imageSrc}");
     `}
-  ${tw`h-64 sm:h-80 bg-center bg-cover rounded-t`}
+  ${tw`h-64 sm:h-80 bg-center bg-cover`}
 `;
-const PostText = tw.div`flex-1 px-6 py-8`;
-const PostTitle = tw.h6`font-bold group-hocus:text-primary-500 transition duration-300 `;
+const PostText = tw.div`flex-1 p-6`;
+const PostTitle = tw.h6`font-bold group-hover:text-primary-500 transition duration-300`;
 const PostDescription = tw.p``;
-const AuthorInfo = tw.div`flex`;
-const AuthorImage = tw.img`w-12 h-12 rounded-full mr-3`;
-const AuthorTextInfo = tw.div`text-xs text-gray-600`;
-const AuthorName = tw.div`font-semibold mt-2`;
-const AuthorProfile = tw.div`pt-1 font-medium`;
+const AuthorInfo = tw.div`flex items-center mt-4`;
+const AuthorImage = tw.img`w-10 h-10 rounded-full mr-3`;
+const AuthorTextInfo = tw.div`text-sm text-gray-600`;
+const AuthorName = tw.div`font-semibold text-gray-900`;
+const AuthorProfile = tw.div`text-xs`;
 
 const PostContainer = styled.div`
   ${tw`relative z-20 mt-10 sm:pt-3 pr-3 w-full sm:w-1/2 lg:w-1/3 max-w-sm mx-auto sm:max-w-none sm:mx-0`}
@@ -35,7 +35,7 @@ const PostContainer = styled.div`
   ${(props) =>
     props.featured &&
     css`
-      ${tw`w-full sm:w-full lg:w-2/3`}
+      ${tw`w-full lg:w-2/3`}
       ${Post} {
         ${tw`sm:flex-row items-center sm:pr-3`}
       }
@@ -67,6 +67,19 @@ const DecoratorBlob2 = tw(
   SvgDotPatternIcon
 )`absolute top-0 right-0 w-32 h-32 mt-16 mr-6 transform translate-x-1/2 -translate-y-1/2 fill-current text-gray-500 opacity-50`;
 
+const useWindowSize = () => {
+  const [size, setSize] = useState([0, 0]);
+  useEffect(() => {
+    const updateSize = () => {
+      setSize([window.innerWidth, window.innerHeight]);
+    };
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+  return size;
+};
+
 export default ({
   subheading = "",
   heading = "We love writing.",
@@ -82,19 +95,44 @@ export default ({
     {
       postImageSrc:
         "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-      title: "Jason Sumanto",
+      title: "Bryan Sumanto",
       authorName: "BALI",
       url: "https://timerse.com",
     },
     {
       postImageSrc:
         "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80",
-      title: "Jason Sumanto",
+      title: "Kevin Sumanto",
       authorName: "BALI",
       url: "https://timerse.com",
     },
   ],
 }) => {
+  const [currentPosts, setCurrentPosts] = useState(posts);
+  const [width] = useWindowSize();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentPosts((prevPosts) => {
+        
+        let shuffledPosts = [...prevPosts].sort(() => Math.random() - 0.5);
+        return shuffledPosts;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [posts]);
+
+  const getDisplayedPosts = () => {
+    if (width < 640) {
+      return currentPosts.slice(0, 1);
+    } else if (width < 1024) {
+      return currentPosts.slice(0, 2);
+    } else {
+      return currentPosts.slice(0, 3);
+    }
+  };
+
   return (
     <Container>
       <ContentWithPaddingXl>
@@ -103,8 +141,8 @@ export default ({
           {description && <Description>{description}</Description>}
         </HeadingContainer>
         <Posts>
-          {posts.map((post, index) => (
-            <PostContainer featured={post.featured} key={index}>
+          {getDisplayedPosts().map((post, index) => (
+            <PostContainer featured={post.featured} key={index} className={`w-full sm:w-1/2 lg:w-1/3`}>
               <Post className="group" href={post.url}>
                 <PostImage imageSrc={post.postImageSrc} />
                 <PostText>

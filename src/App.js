@@ -7,6 +7,7 @@ import Login from "pages/Login";
 import SignupTourist from "pages/Signup";
 import Testimonial from "pages/Testimonial";
 import Destination from "pages/Destination";
+import SignupTourGuide from "pages/SignupTourGuide";
 
 
 
@@ -18,7 +19,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/sign-up-tourist" element={<SignupTourist />} />
+          <Route path="/signup-tourist" element={<SignupTourist />} />
+          <Route path="/signup-tourguide" element={<SignupTourGuide />} />
           <Route path="/testimonial" element={<Testimonial />} />
           <Route path="/destination" element={<Destination />} />
         </Routes>
