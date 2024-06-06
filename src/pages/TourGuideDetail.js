@@ -9,7 +9,7 @@ import { css } from "styled-components/macro";
 import Footer from "components/footers/PageFooter.js";
 import { SectionHeading } from "components/misc/Headings";
 import { PrimaryButton } from "components/misc/Buttons";
-import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/location.svg";
+import { ReactComponent as LocationIcon } from "components/icon/location.svg";
 import { useForm, Controller } from "react-hook-form";
 
 const HeadingRow = tw.div`flex`;

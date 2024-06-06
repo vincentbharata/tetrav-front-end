@@ -4,9 +4,9 @@ import styled from "styled-components";
 import tw from "twin.macro";
 import { css } from "styled-components/macro"; //eslint-disable-line
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
-import DurationIconImage from "feather-icons/dist/icons/time_fill.svg";
-import LocationIconImage from "feather-icons/dist/icons/location.svg";
-import CompassImage from "feather-icons/dist/icons/compass_light.svg";
+import DurationIconImage from "components/icon/time_fill.svg";
+import LocationIconImage from "components/icon/location.svg";
+import CompassImage from "components/icon/compass_light.svg";
 import { ReactComponent as SvgDecoratorBlob3 } from "images/svg-decorator-blob-3.svg";
 
 const ThreeColumnContainer = styled.div`
