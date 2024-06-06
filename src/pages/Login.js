@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
+import { useNavigate } from "react-router-dom";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -10,7 +11,9 @@ import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg
 import axios from "axios";
 import { LoginContext } from "helpers/LoginContext";
 
-const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
+const Container = tw(
+  ContainerBase
+)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
 const MainContainer = tw.div`lg:w-1/2 xl:w-5/12 p-6 sm:p-12`;
 const LogoLink = tw.a``;
@@ -45,20 +48,26 @@ const Login = ({
   signupUrl = "/signup-tourist",
 }) => {
   const { saveLoginData } = useContext(LoginContext);
-  const [username, setUsername] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
+  
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
-        username,
-        password
-      });
-      saveLoginData(response.data);
-      console.log('Login successful:', response.data);
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        {
+          username,
+          password,
+        }
+      );
+      const { id, roles, token, userName } = response.data;
+      console.log("Login successful:", response.data);
+      saveLoginData({ id, roles, token, userName, isLoggedIn: true });
+      navigate("/");
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     }
   };
 
@@ -78,7 +87,7 @@ const Login = ({
                     type="text"
                     placeholder="username"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setUserName(e.target.value)}
                   />
                   <Input
                     type="password"
@@ -93,7 +102,10 @@ const Login = ({
                 </Form>
                 <p tw="mt-8 text-sm text-gray-600 text-center">
                   Don't have an account?{" "}
-                  <a href={signupUrl} tw="border-b border-gray-500 border-dotted">
+                  <a
+                    href={signupUrl}
+                    tw="border-b border-gray-500 border-dotted"
+                  >
                     Sign Up
                   </a>
                 </p>

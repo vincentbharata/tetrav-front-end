@@ -1,10 +1,14 @@
-import "slick-carousel/slick/slick.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Slider from "react-slick";
 import tw from "twin.macro";
 import styled from "styled-components";
-import { css } from "styled-components/macro"; //eslint-disable-line
-import { SectionHeading, Subheading as SubheadingBase } from "components/misc/Headings.js";
+//eslint-disable-next-line
+import { css } from "styled-components/macro"; 
+import {
+  SectionHeading,
+  Subheading as SubheadingBase,
+} from "components/misc/Headings.js";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
 import loveIllustrationImageSrc from "images/love-illustration.svg";
 import { ReactComponent as StarIconBase } from "images/star-icon.svg";
@@ -15,15 +19,17 @@ import { Link } from "react-router-dom";
 const Row = tw.div`flex flex-col md:flex-row justify-between items-center`;
 const Column = tw.div`w-full max-w-md mx-auto md:max-w-none md:mx-0`;
 const ImageColumn = tw(Column)`md:w-5/12 xl:w-6/12 flex-shrink-0 relative`;
-const TextColumn = styled(Column)(props => [
+const TextColumn = styled(Column)((props) => [
   tw`md:w-7/12 xl:w-6/12 mt-16 md:mt-0`,
-  props.textOnLeft ? tw`md:pr-12 lg:pr-16 md:order-first` : tw`md:pl-12 lg:pl-16 md:order-last`
+  props.textOnLeft
+    ? tw`md:pr-12 lg:pr-16 md:order-first`
+    : tw`md:pl-12 lg:pl-16 md:order-last`,
 ]);
 
-const Image = styled.img(props => [
+const Image = styled.img((props) => [
   props.imageRounded && tw`rounded`,
   props.imageBorder && tw`border`,
-  props.imageShadow && tw`shadow`
+  props.imageShadow && tw`shadow`,
 ]);
 
 const Subheading = tw(SubheadingBase)`text-center md:text-left`;
@@ -44,7 +50,9 @@ const TestimonialSlider = styled(Slider)`
 
 const Testimonial = tw.div`outline-none h-full flex! flex-col`;
 const StarsContainer = styled.div``;
-const StarIcon = tw(StarIconBase)`inline-block w-5 h-5 text-orange-400 fill-current mr-1 last:mr-0`;
+const StarIcon = tw(
+  StarIconBase
+)`inline-block w-5 h-5 text-orange-400 fill-current mr-1 last:mr-0`;
 const Quote = tw.blockquote`mt-4 mb-8 sm:mb-10 leading-relaxed font-medium text-gray-700`;
 
 const CustomerInfoAndControlsContainer = tw.div`mt-auto flex justify-between items-center flex-col sm:flex-row`;
@@ -68,7 +76,9 @@ const ControlButton = styled.button`
   }
 `;
 
-const PrimaryButton = tw(Link)`mt-8 text-sm inline-block mx-auto md:mx-0 px-8 py-3 bg-primary-500 text-gray-100 font-bold rounded-lg shadow transition duration-300 hocus:bg-primary-700 hocus:text-gray-200 focus:shadow-outline`;
+const PrimaryButton = tw(
+  Link
+)`mt-8 text-sm inline-block mx-auto md:mx-0 px-8 py-3 bg-primary-500 text-gray-100 font-bold rounded-lg shadow transition duration-300 hocus:bg-primary-700 hocus:text-gray-200`;
 
 const Component = ({
   imageSrc = loveIllustrationImageSrc,
@@ -81,34 +91,32 @@ const Component = ({
   primaryButtonText = "See All",
   watchVideoButtonText = "Meet The Chefs",
   textOnLeft = false,
-  testimonials = [
-    {
-      stars: 5,
-      profileImageSrc:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3.25&w=512&h=512&q=80",
-      quote:
-        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
-      customerName: "Charlotte Hale",
-    },
-    {
-      stars: 5,
-      profileImageSrc:
-        "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=512&h=512&q=80",
-      quote:
-        "Sinor Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
-      customerName: "Adam Cuppy",
-      customerTitle: "Founder, EventsNYC"
-    }
-  ]
 }) => {
   const [sliderRef, setSliderRef] = useState(null);
+  const [testimonials, setTestimonials] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/api/review/list")
+      .then((response) => {
+        setTestimonials(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching testimonials: ", error);
+      });
+  }, []);
 
   return (
     <Container>
       <ContentWithPaddingXl>
         <Row>
           <ImageColumn>
-            <Image src={imageSrc} imageBorder={imageBorder} imageShadow={imageShadow} imageRounded={imageRounded} />
+            <Image
+              src={imageSrc}
+              imageBorder={imageBorder}
+              imageShadow={imageShadow}
+              imageRounded={imageRounded}
+            />
           </ImageColumn>
           <TextColumn textOnLeft={textOnLeft}>
             <Subheading>{subheading}</Subheading>
@@ -119,18 +127,25 @@ const Component = ({
               {testimonials.map((testimonial, index) => (
                 <Testimonial key={index}>
                   <StarsContainer>
-                    {Array.from({ length: testimonial.stars }).map((_, indexIcon) => (
-                      <StarIcon key={indexIcon} />
-                    ))}
+                    {Array.from({ length: testimonial.stars }).map(
+                      (_, indexIcon) => (
+                        <StarIcon key={indexIcon} />
+                      )
+                    )}
                   </StarsContainer>
-                  
-                  <Quote>{testimonial.quote}</Quote>
+
+                  <Quote>{testimonial.message}</Quote>
                   <CustomerInfoAndControlsContainer>
                     <CustomerInfo>
-                      <CustomerProfilePicture src={testimonial.profileImageSrc} alt={testimonial.customerName} />
+                      <CustomerProfilePicture
+                        src={testimonial.profileImageSrc}
+                        alt={testimonial.customerName}
+                      />
                       <CustomerTextInfo>
                         <CustomerName>{testimonial.customerName}</CustomerName>
-                        <CustomerTitle>{testimonial.customerTitle}</CustomerTitle>
+                        <CustomerTitle>
+                          {testimonial.customerTitle}
+                        </CustomerTitle>
                       </CustomerTextInfo>
                     </CustomerInfo>
                     <Controls>

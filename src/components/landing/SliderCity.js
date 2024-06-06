@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import tw from "twin.macro";
 import styled from "styled-components";
 import { SectionHeading } from "components/misc/Headings";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons";
-import { ReactComponent as PriceIcon } from "feather-icons/dist/icons/dollar-sign.svg";
 import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/map-pin.svg";
 import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-16 lg:py-20`;
@@ -34,20 +34,16 @@ const CardSlider = styled(Slider)`
     ${tw`h-auto flex justify-center mb-1`}
   }
 `;
-const Card = tw.div`h-full flex! flex-col sm:border max-w-sm sm:rounded-tl-4xl sm:rounded-br-5xl relative focus:outline-none`;
+const Card = tw.div`h-full flex! flex-col  sm:border max-w-sm sm:rounded-tl-4xl sm:rounded-br-5xl relative focus:outline-none min-w-[400px]`;
 const CardImage = styled.div((props) => [
   `background-image: url("${props.imageSrc}");`,
   tw`w-full h-56 sm:h-64 bg-cover bg-center rounded sm:rounded-none sm:rounded-tl-4xl`,
 ]);
 
 const TextInfo = tw.div`py-6 sm:px-10 sm:py-6`;
-const TitleReviewContainer = tw.div`flex flex-col sm:flex-row sm:justify-between sm:items-center`;
-const Title = tw.h5`text-2xl font-bold`;
-const SeeButton = tw(Link)`text-sm inline-block ml-5 px-8 py-3 bg-primary-500 text-gray-100 font-bold rounded-lg shadow transition duration-300 hocus:bg-primary-700 hocus:text-gray-200 focus:shadow-outline`;
-
-
-const Description = tw.p`text-sm leading-loose mt-2 sm:mt-4`;
-
+const SeeButton = tw(
+  Link
+)`text-sm inline-block ml-5 px-8 py-3 bg-primary-500 text-gray-100 font-bold rounded-lg shadow transition duration-300 hocus:bg-primary-700 hocus:text-gray-200 focus:shadow-outline`;
 
 const SecondaryInfoContainer = tw.div`flex flex-col sm:flex-row mt-2 sm:mt-4`;
 const IconWithText = tw.div`flex items-center mr-6 my-2 sm:my-0`;
@@ -59,14 +55,27 @@ const IconContainer = styled.div`
 `;
 const Text = tw.div`ml-2 text-xs font-semibold text-gray-800`;
 
+// ...imports
+
 const PrimaryButton = tw(
   PrimaryButtonBase
 )`mt-auto sm:text-lg rounded-none w-full rounded sm:rounded-none sm:rounded-br-4xl py-3 sm:py-6`;
+
 export default () => {
-  // useState is used instead of useRef below because we want to re-render when sliderRef becomes available (not null)
   const [sliderRef, setSliderRef] = useState(null);
+  const [cards, setCards] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/api/location/list')
+      .then(response => {
+        setCards(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
   const sliderSettings = {
-    
     arrows: false,
     slidesToShow: 3,
     responsive: [
@@ -76,7 +85,6 @@ export default () => {
           slidesToShow: 2,
         },
       },
-
       {
         breakpoint: 900,
         settings: {
@@ -86,52 +94,11 @@ export default () => {
     ],
   };
 
-  /* Change this according to your needs */
-  const cards = [
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&h=1024&w=768&q=80",
-      title: "BALI",
-      description:
-        "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-      locationText: "Indonesia",
-      pricingText: "From $20/Tour",
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&h=1024&w=768&q=80",
-      title: "JAKARTA",
-      description:
-        "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-      locationText: "Indonesia",
-      pricingText: "From $20/Tour",
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1549294413-26f195200c16?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&h=1024&w=768&q=80",
-      title: "YOGYAKARTA",
-      description:
-        "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-      locationText: "Indonesia",
-      pricingText: "From $20/Tour",
-    },
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1571770095004-6b61b1cf308a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&h=1024&w=768&q=80",
-      title: "SOLO",
-      description:
-        "Lorem ipsum dolor sit amet, consectur dolori adipiscing elit, sed do eiusmod tempor nova incididunt ut labore et dolore magna aliqua.",
-      locationText: "Indonesia",
-      pricingText: "From $20/Tour",
-    },
-  ];
-
   return (
     <Container>
       <Content>
         <HeadingWithControl>
           <Heading>Popular City</Heading>
-          
           <Controls>
             <PrevButton onClick={sliderRef?.slickPrev}>
               <ChevronLeftIcon />
@@ -139,36 +106,27 @@ export default () => {
             <NextButton onClick={sliderRef?.slickNext}>
               <ChevronRightIcon />
             </NextButton>
-            <SeeButton to="/testimonial">See All</SeeButton>
+            <SeeButton to="/city">See All</SeeButton>
           </Controls>
         </HeadingWithControl>
-       
-        
         <CardSlider ref={setSliderRef} {...sliderSettings}>
           {cards.map((card, index) => (
             <Card key={index}>
               <CardImage imageSrc={card.imageSrc} />
               <TextInfo>
-                <TitleReviewContainer>
-                  <Title>{card.title}</Title>
-                </TitleReviewContainer>
+                <container>
+                  <cityName>{card.location.cityName}</cityName>
+                </container>
                 <SecondaryInfoContainer>
                   <IconWithText>
                     <IconContainer>
                       <LocationIcon />
                     </IconContainer>
-                    <Text>{card.locationText}</Text>
-                  </IconWithText>
-                  <IconWithText>
-                    <IconContainer>
-                      <PriceIcon />
-                    </IconContainer>
-                    <Text>{card.pricingText}</Text>
+                    <Text>{card.location.cityRegion}</Text>
                   </IconWithText>
                 </SecondaryInfoContainer>
-                <Description>{card.description}</Description>
               </TextInfo>
-              <PrimaryButton>Explore More</PrimaryButton>
+              <PrimaryButton as={Link} to={`/destination/${card.cityName}`}>Explore More</PrimaryButton>
             </Card>
           ))}
         </CardSlider>
