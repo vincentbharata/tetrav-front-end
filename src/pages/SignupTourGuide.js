@@ -8,6 +8,7 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
+import { useNavigate } from "react-router-dom";
 
 const Container = tw(
   ContainerBase
@@ -58,6 +59,7 @@ const useSignup = (initialState) => {
   const [error, setError] = useState(null);
   const [showDescription, setShowDescription] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const { firstName, lastName, username, email, phoneNumber, location, password, confirmPassword } = formData;
@@ -93,6 +95,7 @@ const useSignup = (initialState) => {
     try {
       const response = await axios.post("http://localhost:8080/api/tour-guide/register/tour/guide", formData);
       console.log("Signup successful:", response.data);
+      navigate('/login');
     } catch (error) {
       console.error("Signup failed:", error);
       setError(error.response?.data?.message || "Signup failed");

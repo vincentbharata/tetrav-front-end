@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { css } from "styled-components/macro";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
@@ -24,6 +25,7 @@ const CardContainer = tw.div`mt-10 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 sm:pr-10 md
 const Card = styled(motion.div)`
   ${tw`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`}
 `;
+
 const CardImageContainer = styled.div`
   ${(props) =>
     css`
@@ -125,7 +127,7 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
           whileHover="hover"
           animate="rest"
         >
-          <a href={card.url}>
+          <Link to={`/destination/${card.location.cityName}`}>
             <CardImageContainer imageSrc={card.imageSrc}>
               <CardRatingContainer>
                 <CardRating>
@@ -155,7 +157,7 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
               <CardContent>{card.location.cityState}</CardContent>
               <CardPrice>From ${card.price}</CardPrice>
             </CardText>
-          </a>
+          </Link>
         </Card>
       </CardContainer>
     ));
