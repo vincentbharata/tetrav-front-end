@@ -61,7 +61,8 @@ const PopularDestinations = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('api-link');
+        const response = await axios.get('http://localhost:8080/api/location/list');
+        console.log(response.data);
         setCards(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -98,10 +99,10 @@ const PopularDestinations = () => {
                       <CardPriceAmount>From {card.price}</CardPriceAmount>
                     </CardPrice>
                   </CardHeader>
-                  <CardPlaceName>{card.placeName}</CardPlaceName>
+                  <CardPlaceName>{card.location.placeName}</CardPlaceName>
                   <CardMeta>
                     <CardMetaFeature>
-                      <LocationIcon /> {card.cityName}
+                      <LocationIcon /> {card.location.cityName}
                     </CardMetaFeature>
                   </CardMeta>
                   <CardAction>Book Now</CardAction>

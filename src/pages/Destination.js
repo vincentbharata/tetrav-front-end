@@ -24,6 +24,9 @@ const CardContainer = tw.div`mt-10 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 sm:pr-10 md
 const Card = styled(motion.div)`
   ${tw`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`}
 `;
+const Card = styled(motion.div)`
+  ${tw`bg-gray-200 rounded-b block max-w-xs mx-auto sm:max-w-none sm:mx-0`}
+`;
 const CardImageContainer = styled.div`
   ${(props) =>
     css`
@@ -77,7 +80,8 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("api-link");
+      const response = await axios.get("http://localhost:8080/api/location/list");
+      console.log(response.data)
       setCards(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -110,10 +114,11 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
 
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+  // console.log(indexOfFirstCard, indexOfLastCard);
   const currentCards = isSearching
     ? searchResults.slice(indexOfFirstCard, indexOfLastCard)
     : cards.slice(indexOfFirstCard, indexOfLastCard);
-
+  console.log(currentCards)
   const renderCards = () => {
     return currentCards.map((card, index) => (
       <CardContainer key={index}>
@@ -128,9 +133,9 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
               <CardRatingContainer>
                 <CardRating>
                   <StarIcon />
-                  {card.rating}
+                  {card.star}
                 </CardRating>
-                <CardReview>({card.reviews})</CardReview>
+                <CardReview>({card.total})</CardReview>
               </CardRatingContainer>
               <CardHoverOverlay
                 variants={{
@@ -149,8 +154,8 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
               </CardHoverOverlay>
             </CardImageContainer>
             <CardText>
-              <CardTitle>{card.placeName}</CardTitle>
-              <CardContent>{card.cityName}</CardContent>
+              <CardTitle>{card.location.cityName}</CardTitle>
+              <CardContent>{card.location.cityState}</CardContent>
               <CardPrice>From ${card.price}</CardPrice>
             </CardText>
           </a>

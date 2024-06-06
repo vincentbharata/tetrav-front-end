@@ -53,7 +53,7 @@ const useSignup = (initialState) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await axios.post("api-link", formData);
+      const response = await axios.post("http://localhost:8080/api/auth/register", formData);
       console.log("Signup successful:", response.data);
     } catch (error) {
       console.error("Signup failed:", error);
