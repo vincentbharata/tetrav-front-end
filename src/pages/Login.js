@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
+import { useNavigate } from "react-router-dom";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -47,6 +48,7 @@ const Login = ({
   const { saveLoginData } = useContext(LoginContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -57,6 +59,7 @@ const Login = ({
       });
       saveLoginData(response.data);
       console.log('Login successful:', response.data);
+      navigate('/'); 
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -109,4 +112,4 @@ const Login = ({
   );
 };
 
-export default Login;
+export default Login;

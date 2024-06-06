@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
@@ -19,7 +20,6 @@ const LogoImage = tw.img`h-12 mx-auto`;
 const MainContent = tw.div`mt-12 flex flex-col items-center`;
 const Heading = tw.h1`text-2xl xl:text-3xl font-extrabold`;
 const FormContainer = tw.div`w-full flex-1 mt-8`;
-const InputContainer = tw.div`flex-auto my-5 px-1`;
 const MiniForm = tw.form`mx-auto max-w-md flex justify-between`;
 const Form = tw.form`mx-auto max-w-md`;
 const Input = tw.input`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 first:mt-0`;
@@ -42,10 +42,16 @@ const useSignup = (initialState) => {
   const [formData, setFormData] = useState(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === "phoneNumber") {
+      const sanitizedValue = value.replace(/\D/g, '');
+      setFormData({ ...formData, [name]: sanitizedValue });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -55,6 +61,7 @@ const useSignup = (initialState) => {
     try {
       const response = await axios.post("http://localhost:8080/api/auth/register", formData);
       console.log("Signup successful:", response.data);
+      navigate('/login');
     } catch (error) {
       console.error("Signup failed:", error);
       setError(error.response?.data?.message || "Signup failed");
@@ -104,27 +111,23 @@ export default ({
               <Heading>{headingText}</Heading>
               <FormContainer>
                 <MiniForm>
-                  <InputContainer>
-                    <Input
-                      type="text"
-                      name="firstName"
-                      placeholder="First Name"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                    />
-                  </InputContainer>
-                  <InputContainer>
-                    <Input
-                      type="text"
-                      name="lastName"
-                      placeholder="Last Name"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                    />
-                  </InputContainer>
+                  <Input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
                 </MiniForm>
                 <Form onSubmit={handleSubmit}>
-                <Input
+                  <Input
                     type="text"
                     name="username"
                     placeholder="Username"
@@ -136,6 +139,20 @@ export default ({
                     name="email"
                     placeholder="Email"
                     value={formData.email}
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="text"
+                    name="location"
+                    placeholder="City Residence"
+                    value={formData.location}
+                    onChange={handleChange}
+                  />
+                  <Input
+                    type="text"
+                    name="phoneNumber"
+                    placeholder="Phone Number"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                   />
                   <Input
@@ -181,3 +198,4 @@ export default ({
     </AnimationRevealPage>
   );
 };
+
