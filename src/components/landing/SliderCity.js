@@ -66,7 +66,7 @@ export default () => {
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
-    axios.get('api-link')
+    axios.get('http://localhost:8080/api/location/list')
       .then(response => {
         setCards(response.data);
       })
@@ -115,14 +115,14 @@ export default () => {
               <CardImage imageSrc={card.imageSrc} />
               <TextInfo>
                 <container>
-                  <cityName>{card.cityName}</cityName>
+                  <cityName>{card.location.cityName}</cityName>
                 </container>
                 <SecondaryInfoContainer>
                   <IconWithText>
                     <IconContainer>
                       <LocationIcon />
                     </IconContainer>
-                    <Text>{card.region}</Text>
+                    <Text>{card.location.cityRegion}</Text>
                   </IconWithText>
                 </SecondaryInfoContainer>
               </TextInfo>

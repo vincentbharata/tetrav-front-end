@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { css } from "styled-components/macro"; // eslint-disable-line
 import { Link } from "react-router-dom";
 import { SectionHeading } from "components/misc/Headings.js";
 import { SectionDescription } from "components/misc/Typography.js";
@@ -49,28 +49,27 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
   ${tw`pointer-events-none -z-20 absolute left-0 bottom-0 h-64 w-64 opacity-15 transform -translate-x-2/3 text-primary-500`}
 `;
 
-export default ({
+const CityList = ({
   heading = "City List",
   description = "Choose your dream city and embark on a journey filled with excitement, culture, and unforgettable experiences.",
-  cityList = [
-    {
-      cityName: "Bali",
-      region: "Indonesia",
-    },
-    {
-      cityName: "Jakarta",
-      region: "Indonesia",
-    },
-    {
-      cityName: "Yogyakarta",
-      region: "Indonesia",
-    },
-    {
-      cityName: "Surabaya",
-      region: "Indonesia",
-    },
-  ],
+  cityList = [],
 }) => {
+  const [cities, setCities] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/location/list");
+        setCities(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <>
       <AnimationRevealPage>
@@ -83,12 +82,12 @@ export default ({
                 {description && <Description>{description}</Description>}
               </HeaderContent>
               <CityListContainer>
-                {cityList.map((city, index) => (
-                  <City key={index} to={`/destination/${city.cityName}`}>
+                {cities.map((city, index) => (
+                  <City key={index} to={`/destination/${city.location.cityName}`}>
                     <CityName>
-                      <CityNameText>{city.cityName}</CityNameText>
+                      <CityNameText>{city.location.cityName}</CityNameText>
                     </CityName>
-                    <Region>{city.region}</Region>
+                    <Region>{city.location.cityRegion}</Region>
                   </City>
                 ))}
               </CityListContainer>
@@ -102,3 +101,5 @@ export default ({
     </>
   );
 };
+
+export default CityList;

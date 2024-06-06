@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -9,6 +9,7 @@ import useAnimatedNavToggler from "../../helpers/useAnimatedNavToggler.js";
 import logo from "../../images/logo.svg";
 import { ReactComponent as MenuIcon } from "feather-icons/dist/icons/menu.svg";
 import { ReactComponent as CloseIcon } from "feather-icons/dist/icons/x.svg";
+import { LoginContext } from "helpers/LoginContext.js";
 
 const Header = tw.header`
   flex justify-between items-center
@@ -67,18 +68,19 @@ export default ({
   collapseBreakpointClass = "lg",
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {loginData, saveLoginData} = useContext(LoginContext)
 
   const defaultLinks = [
     <NavLinks key={1}>
       <NavLink href="/#">Home</NavLink>
       <NavLink href="/#">Booking</NavLink>
-      <NavLink href="/#">Chat</NavLink>
-      {!isLoggedIn && (
+      <NavLink href="/#">Welcome Back {loginData.userName}</NavLink>
+      {!loginData.isLoggedIn && (
         <NavLink href="/login" tw="lg:ml-12!">
           Login
         </NavLink>
       )}
-      {!isLoggedIn && (
+      {!loginData.isLoggedIn && (
         <PrimaryLink
           css={roundedHeaderButton && tw`rounded-full`}
           href="/signup-tourist"
@@ -86,18 +88,18 @@ export default ({
           Sign Up
         </PrimaryLink>
       )}
-      {isLoggedIn && (
+      {loginData.isLoggedIn && (
         <LogoutLink
           css={roundedHeaderButton && tw`rounded-full`}
-          href="/logout"
-          onClick={() => setIsLoggedIn(false)}
+          href="/"
+          onClick={() => saveLoginData({loginData, isLoggedIn : false})}
         >
           Logout
         </LogoutLink>
       )}
     </NavLinks>,
   ];
-
+ 
   const { showNavLinks, animation, toggleNavbar } = useAnimatedNavToggler();
   const collapseBreakpointCss =
     collapseBreakPointCssMap[collapseBreakpointClass];

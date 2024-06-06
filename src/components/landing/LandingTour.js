@@ -89,13 +89,15 @@ const GuideSection = ({
 
   useEffect(() => {
     axios
-      .get("api-link")
+      .get("http://localhost:8080/api/tour-guide/list")
       .then((response) => {
+        console.log(response.data);
         setGuides(response.data);
       })
       .catch((error) => {
         console.error("Error fetching guides: ", error);
       });
+    
   }, []);
 
   const [currentGuides, setCurrentGuides] = useState(guides);
@@ -114,11 +116,11 @@ const GuideSection = ({
 
   const getDisplayedGuides = () => {
     if (width < 640) {
-      return currentGuides.slice(0, 1);
+      return guides.slice(0, 1);
     } else if (width < 1024) {
-      return currentGuides.slice(0, 2);
+      return guides.slice(0, 2);
     } else {
-      return currentGuides.slice(0, 3);
+      return guides.slice(0, 3);
     }
   };
 
@@ -139,13 +141,13 @@ const GuideSection = ({
               <Guide className="group" href={guide.url}>
                 <GuideImage imageSrc={guide.guideProfile} />
                 <GuideText>
-                  <GuideName>{guide.name}</GuideName>
+                  <GuideName>{guide.user.firstName} {guide.user.lastName}</GuideName>
                   <GuideInfo>
                     {guide.featured && (
                       <GuideProfileImage src={guide.GuideProfileImageSrc} />
                     )}
                     <GuideTextInfo>
-                      <Location>{guide.location}</Location>
+                      <Location>{guide.tourLocation}</Location>
                     </GuideTextInfo>
                   </GuideInfo>
                 </GuideText>
