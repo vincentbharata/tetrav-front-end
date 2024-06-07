@@ -81,8 +81,7 @@ export default () => {
   useEffect(() => {
     axios.get('YOUR_API_ENDPOINT')
       .then(response => {
-        const data = response.data;
-        setCards(data);
+        setCards(response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the data!", error);
@@ -105,15 +104,15 @@ export default () => {
               <CardImage imageSrc={card.imageSrc} />
               <TextInfo>
                 <TitleReviewContainer>
-                  <Title>{card.title}</Title>
+                  <Title>{card.user}</Title>
                   <IconWithText>
                     <IconContainer>
                       <LocationIcon />
                     </IconContainer>
-                    <Text>{card.locationText}</Text>
+                    <Text>{card.tourLocation}</Text>
                   </IconWithText>
                 </TitleReviewContainer>
-                <Description>{card.description}</Description>
+                <Description>{card.tourDesc}</Description>
               </TextInfo>
               <PrimaryButton>Book Now</PrimaryButton>
             </Card>
