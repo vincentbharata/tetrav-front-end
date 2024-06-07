@@ -15,6 +15,7 @@ const Container = tw(
 )`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
 const MainContainer = tw.div`lg:w-1/2 xl:w-5/12 p-6 sm:p-12`;
+const InputContainer = tw.div`flex-auto my-5 px-1`;
 const LogoLink = tw.a``;
 const LogoImage = tw.img`h-12 mx-auto`;
 const MainContent = tw.div`mt-12 flex flex-col items-center`;
@@ -95,6 +96,7 @@ export default ({
       lastName: "",
       username: "",
       email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
     });
@@ -110,22 +112,26 @@ export default ({
             <MainContent>
               <Heading>{headingText}</Heading>
               <FormContainer>
-                <MiniForm>
-                  <Input
-                    type="text"
-                    name="firstName"
-                    placeholder="First Name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                  />
-                  <Input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                  />
-                </MiniForm>
+              <MiniForm>
+                      <InputContainer>
+                        <Input
+                          type="text"
+                          name="firstName"
+                          placeholder="First Name"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                        />
+                      </InputContainer>
+                      <InputContainer>
+                        <Input
+                          type="text"
+                          name="lastName"
+                          placeholder="Last Name"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                        />
+                      </InputContainer>
+                    </MiniForm>
                 <Form onSubmit={handleSubmit}>
                   <Input
                     type="text"
