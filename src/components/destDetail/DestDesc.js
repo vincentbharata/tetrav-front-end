@@ -12,7 +12,9 @@ const LeftColumn = tw.div`ml-8 mr-8 xl:pl-10 py-8`;
 const RightColumn = styled.div`
   ${tw`bg-green-500 bg-cover xl:ml-24 h-96 lg:h-auto lg:w-1/2 lg:flex-1`}
 `;
-
+const StyledImage = styled.img`
+  ${tw`w-full h-full object-cover`}
+`;
 const Content = tw.div`mt-24 lg:mt-24 lg:mb-24 flex flex-col sm:items-center lg:items-stretch`;
 const Heading = tw.h1`text-3xl sm:text-5xl md:text-6xl lg:text-5xl font-black leading-none`;
 const Paragraph = tw.p`max-w-md my-8 lg:my-5 lg:my-8 sm:text-lg lg:text-base xl:text-lg leading-loose`;
@@ -46,12 +48,12 @@ export default () => {
             <RatingsInfo>
               <OveralRating>Overall Rating: </OveralRating>
               <StarIcon />
-              <Rating>{location.star}({location.total}) reviews</Rating>
+              <Rating>{(location.star != null) ?location.star : 0 }({location.total}) reviews</Rating>
             </RatingsInfo>
           </Content>
         </LeftColumn>
         <RightColumn>
-          <img src={location.location.cityImage} alt={`${location.location.cityName} Image`} />
+          <StyledImage src={location.location.cityImage} alt={`${location.location.cityName} Image`} />
         </RightColumn>
       </TwoColumn>
     </Container>

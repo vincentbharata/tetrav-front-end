@@ -8,7 +8,9 @@ import Footer from "components/footers/PageFooter.js";
 import DestPict from "components/destDetail/DestPict";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import {useLocationState}  from "helpers/LocationContext";
+import { useLocationState } from "helpers/LocationContext";
+import Header from "components/headers/header";
+import { Container } from "components/misc/Layouts";
 
 export default () => {
   const { location, setLocation } = useLocationState();
@@ -40,11 +42,14 @@ export default () => {
   return (
     <>
       <AnimationRevealPage>
-        <DestinationDesc location={location} />
-        {/* <DestInfo /> */}
-        <DestPict location={location} textOnLeft={false} />
-        <Forecast location={location} textOnLeft={false} />
-        <TourGuideCard location={location} />
+        <Header roundedHeaderButton={true} />
+        <Container>
+          <DestinationDesc location={location} />
+          {/* <DestInfo /> */}
+          <DestPict location={location} textOnLeft={false} />
+          <Forecast location={location} textOnLeft={false} />
+          <TourGuideCard location={location} />
+        </Container>
       </AnimationRevealPage>
       <Footer />
     </>

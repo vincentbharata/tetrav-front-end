@@ -8,6 +8,7 @@ import { PrimaryLink as PrimaryLinkBase } from "components/misc/Links.js";
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/map-pin.svg";
 import { ReactComponent as ArrowRightIcon } from "images/arrow-right-icon.svg";
+import { useNavigate } from "react-router-dom";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-20 lg:py-24`;
@@ -57,6 +58,7 @@ const CardAction = tw(PrimaryButtonBase)`w-full mt-8`;
 
 const PopularDestinations = () => {
   const [cards, setCards] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -105,7 +107,7 @@ const PopularDestinations = () => {
                       <LocationIcon /> {card.location.cityName}
                     </CardMetaFeature>
                   </CardMeta>
-                  <CardAction>Book Now</CardAction>
+                  <CardAction onClick={()=> navigate(`/destination/detail/${card.location.id}`)}>Book Now</CardAction>
                 </CardText>
               </Card>
             </CardColumn>

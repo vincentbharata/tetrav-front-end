@@ -8,7 +8,7 @@ import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/map-pin
 import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
 import axios from "axios";
-import {useLocationState}  from "helpers/LocationContext";
+import { useLocationState } from "helpers/LocationContext";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-10`;
@@ -27,7 +27,7 @@ const NextButton = tw(ControlButton)``;
 
 const CardSlider = styled(Slider)`
   ${tw`mt-16`}
-  .slick-track { 
+  .slick-track {
     ${tw`flex`}
   }
   .slick-slide {
@@ -35,9 +35,9 @@ const CardSlider = styled(Slider)`
   }
 `;
 const Card = tw.div`h-full flex! flex-col sm:border max-w-sm sm:rounded-tl-4xl sm:rounded-br-5xl relative focus:outline-none`;
-const CardImage = styled.div(props => [
+const CardImage = styled.div((props) => [
   `background-image: url("${props.imageSrc}");`,
-  tw`w-full h-56 sm:h-64 bg-cover bg-center rounded sm:rounded-none sm:rounded-tl-4xl`
+  tw`w-full h-56 sm:h-64 bg-cover bg-center rounded sm:rounded-none sm:rounded-tl-4xl`,
 ]);
 
 const TextInfo = tw.div`py-6 sm:px-10 sm:py-6`;
@@ -54,7 +54,9 @@ const IconContainer = styled.div`
 `;
 const Text = tw.div`ml-2 text-sm font-semibold text-gray-800`;
 
-const PrimaryButton = tw(PrimaryButtonBase)`mt-auto sm:text-lg rounded-none w-full rounded sm:rounded-none sm:rounded-br-4xl py-3 sm:py-6`;
+const PrimaryButton = tw(
+  PrimaryButtonBase
+)`mt-auto sm:text-lg rounded-none w-full rounded sm:rounded-none sm:rounded-br-4xl py-3 sm:py-6`;
 
 export default () => {
   const [sliderRef, setSliderRef] = useState(null);
@@ -70,29 +72,32 @@ export default () => {
         breakpoint: 1280,
         settings: {
           slidesToShow: 2,
-        }
+        },
       },
       {
         breakpoint: 900,
         settings: {
           slidesToShow: 1,
-        }
+        },
       },
-    ]
+    ],
   };
 
-  const { location} = useLocationState();
+  const { location } = useLocationState();
   console.log(location);
 
   useEffect(() => {
     if (location && location.location && location.location.cityName) {
-      axios.get(`http://localhost:8080/api/tour-guide/${location.location.cityName}`)
-        .then(response => {
+      axios
+        .get(
+          `http://localhost:8080/api/tour-guide/${location.location.cityName}`
+        )
+        .then((response) => {
           console.log(response.data);
           setCards(response.data);
           setLoading(false);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("There was an error fetching the data!", error);
           setError(error);
           setLoading(false);
@@ -106,33 +111,51 @@ export default () => {
   return (
     <Container>
       <Content>
-        <HeadingWithControl>
-          <Heading>Select Your Tour Guide</Heading>
-          <Controls>
-            <PrevButton onClick={() => sliderRef?.slickPrev()}><ChevronLeftIcon /></PrevButton>
-            <NextButton onClick={() => sliderRef?.slickNext()}><ChevronRightIcon /></NextButton>
-          </Controls>
-        </HeadingWithControl>
-        <CardSlider ref={setSliderRef} {...sliderSettings}>
-          {cards.map((card, index) => (
-            <Card key={index}>
-              <CardImage imageSrc={card.imageSrc} />
-              <TextInfo>
-                <TitleReviewContainer>
-                  <Title>{card.user.firstName} {card.user.lastName}</Title>
-                  <IconWithText>
-                    <IconContainer>
-                      <LocationIcon />
-                    </IconContainer>
-                    <Text>{card.user.tourLocation}</Text>
-                  </IconWithText>
-                </TitleReviewContainer>
-                <Description>{card.user.tourDesc}</Description>
-              </TextInfo>
-              <PrimaryButton>Book Now</PrimaryButton>
-            </Card>
-          ))}
-        </CardSlider>
+        {cards != null ? (
+          <>
+            <HeadingWithControl>
+              <Heading>Select Your Tour Guide</Heading>
+              <Controls>
+                <PrevButton onClick={() => sliderRef?.slickPrev()}>
+                  <ChevronLeftIcon />
+                </PrevButton>
+                <NextButton onClick={() => sliderRef?.slickNext()}>
+                  <ChevronRightIcon />
+                </NextButton>
+              </Controls>
+            </HeadingWithControl>
+            <CardSlider ref={setSliderRef} {...sliderSettings}>
+              {cards.map((card, index) => (
+                <Card key={index}>
+                  <CardImage imageSrc={card.imageSrc} />
+                  <TextInfo>
+                    <TitleReviewContainer>
+                      <Title>
+                        {card.user.firstName} {card.user.lastName}
+                      </Title>
+                      <IconWithText>
+                        <IconContainer>
+                          <LocationIcon />
+                        </IconContainer>
+                        <Text>{card.user.tourLocation}</Text>
+                      </IconWithText>
+                    </TitleReviewContainer>
+                    <Description>{card.user.tourDesc}</Description>
+                  </TextInfo>
+                  <PrimaryButton>Book Now</PrimaryButton>
+                </Card>
+              ))}
+            </CardSlider>
+          </>
+        ) : (
+          <p
+            css={tw`text-primary-500 text-center mt-20 text-3xl flex justify-center items-center font-bold`}
+          >
+            Oops! Looks like your destination or city wasn't found.
+            <br />
+            Please try searching for another destination or city.
+          </p>
+        )}
       </Content>
     </Container>
   );
