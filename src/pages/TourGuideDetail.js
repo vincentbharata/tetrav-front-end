@@ -53,33 +53,15 @@ const Test = tw.div`flex flex-wrap items-center`;
 const LocationCheckpoint = tw.span`ml-2 text-gray-800 text-base font-normal`;
 const TextInformation = tw.span`ml-8`;
 
-export default ({
-  headingText = "Meet your tour guide, Jason",
-  priceText = "Price: $100.000.000",
-  posts = [
-    {
-      imageSrc:
-        "https://images.unsplash.com/photo-1499678329028-101435549a4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1024&q=80",
-      featured: true
-    },
-  ]
-}) => {
+export default () => {
   const [visible] = useState(7);
-  const [aboutMe, setAboutMe] = useState("");
-  const [image, setImage] = useState("");
-  const [meetingLocation, setMeetingLocation] = useState("");
-  const [languages, setLanguages] = useState("");
-  const [tourGuideName, setTourGuideName] = useState("");
+  const [tourGuide, setTourGuide] = useState([]);
 
   useEffect(() => {
     // Fetch data using Axios
-    axios.get("YOUR_ABOUT_ME_API_URL")
+    axios.get("YOUR_API_ENDPOINT")
       .then(response => {
-        setAboutMe(response.data.aboutMe);
-        setImage(response.data.image);
-        setMeetingLocation(response.data.meetingLocation);
-        setLanguages(response.data.languages);
-        setTourGuideName(response.data.tourGuideName);
+        setTourGuide(response.data);
       })
       .catch(error => {
         console.error("Error fetching about me data:", error);
@@ -99,10 +81,10 @@ export default ({
         <Container>
             <ContentWithPaddingXl>
             <HeadingRow>
-                <Heading>Meet your tour guide{tourGuideName}</Heading>
+                <Heading>Meet your tour guide{tourGuide.tourGuideName}</Heading>
             </HeadingRow>
             <Posts>
-                {posts.slice(0, visible).map((post, index) => (
+                {tourGuide.slice(0, visible).map((post, index) => (
                 <PostContainer key={index} featured={post.featured}>
                     <Post>
                     <Image imageSrc={post.imageSrc} />
@@ -152,7 +134,7 @@ export default ({
                         <Controller
                         name="Qty"
                         rules={{
-                            required: " is Required",
+                            required: "Quantity is Required",
                         }}
                         control={control}
                         render={({ field }) => (
@@ -174,23 +156,23 @@ export default ({
                         Book Now
                         </BookButton>
                         <PriceBorder></PriceBorder>
-                        <PriceText>{priceText}</PriceText>
+                        <PriceText>Price: $ {post.tourPrice}</PriceText>
                     </Border>
                     </Post>
                 </PostContainer>
                 ))}
                 <Test>
-                <TourGuideName>{tourGuideName}, Your Tour Guide</TourGuideName>
+                <TourGuideName>{tourGuide.user}, Your Tour Guide</TourGuideName>
                 <ChatButton>Chat</ChatButton>
                 </Test>
-                <Languages>{languages}</Languages>
+                <Languages>I can speak:{tourGuide.tourLanguage}</Languages>
                 <TourGuideName>About Me</TourGuideName>
-                <Languages>{aboutMe}</Languages>
+                <Languages>{tourGuide.tourDesc}</Languages>
                 <HeadingBorder></HeadingBorder>
                 <TourGuideName>Meeting Point</TourGuideName>
                 <Test>
                 <LocationIcon />
-                <LocationCheckpoint>{meetingLocation}</LocationCheckpoint>
+                <LocationCheckpoint>{tourGuide.meetingLocation}</LocationCheckpoint>
                 </Test>
                 <TextInformation>(for detail location and time you can contact your tour guide)</TextInformation>
             </Posts>
