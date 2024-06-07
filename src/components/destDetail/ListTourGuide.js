@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Slider from "react-slick";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -8,6 +8,7 @@ import { ReactComponent as LocationIcon } from "feather-icons/dist/icons/map-pin
 import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chevron-left.svg";
 import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
 import axios from "axios";
+import {useLocationState}  from "helpers/LocationContext";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-10`;
@@ -58,6 +59,8 @@ const PrimaryButton = tw(PrimaryButtonBase)`mt-auto sm:text-lg rounded-none w-fu
 export default () => {
   const [sliderRef, setSliderRef] = useState(null);
   const [cards, setCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const sliderSettings = {
     arrows: false,
@@ -78,15 +81,27 @@ export default () => {
     ]
   };
 
+  const { location} = useLocationState();
+  console.log(location);
+
   useEffect(() => {
-    axios.get('YOUR_API_ENDPOINT')
-      .then(response => {
-        setCards(response.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the data!", error);
-      });
-  }, []);
+    if (location && location.location && location.location.cityName) {
+      axios.get(`http://localhost:8080/api/tour-guide/${location.location.cityName}`)
+        .then(response => {
+          console.log(response.data);
+          setCards(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error("There was an error fetching the data!", error);
+          setError(error);
+          setLoading(false);
+        });
+    }
+  }, [location]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading tour guides.</div>;
 
   return (
     <Container>
@@ -94,8 +109,8 @@ export default () => {
         <HeadingWithControl>
           <Heading>Select Your Tour Guide</Heading>
           <Controls>
-            <PrevButton onClick={sliderRef?.slickPrev}><ChevronLeftIcon/></PrevButton>
-            <NextButton onClick={sliderRef?.slickNext}><ChevronRightIcon/></NextButton>
+            <PrevButton onClick={() => sliderRef?.slickPrev()}><ChevronLeftIcon /></PrevButton>
+            <NextButton onClick={() => sliderRef?.slickNext()}><ChevronRightIcon /></NextButton>
           </Controls>
         </HeadingWithControl>
         <CardSlider ref={setSliderRef} {...sliderSettings}>
@@ -104,15 +119,15 @@ export default () => {
               <CardImage imageSrc={card.imageSrc} />
               <TextInfo>
                 <TitleReviewContainer>
-                  <Title>{card.user}</Title>
+                  <Title>{card.user.firstName} {card.user.lastName}</Title>
                   <IconWithText>
                     <IconContainer>
                       <LocationIcon />
                     </IconContainer>
-                    <Text>{card.tourLocation}</Text>
+                    <Text>{card.user.tourLocation}</Text>
                   </IconWithText>
                 </TitleReviewContainer>
-                <Description>{card.tourDesc}</Description>
+                <Description>{card.user.tourDesc}</Description>
               </TextInfo>
               <PrimaryButton>Book Now</PrimaryButton>
             </Card>

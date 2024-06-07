@@ -10,25 +10,34 @@ import Destination from "pages/Destination";
 import SignupTourGuide from "pages/SignupTourGuide";
 import DestDetail from "pages/DestinationDetail.js";
 import TourGuideDetail from "pages/TourGuideDetail";
-
+import CityList from "pages/CityList";
+import { LoginProvider } from "helpers/LoginContext";
 
 
 export default function App() {
   return (
     <>
-      <GlobalStyles />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup-tourist" element={<SignupTourist />} />
-          <Route path="/signup-tourguide" element={<SignupTourGuide />} />
-          <Route path="/testimonial" element={<Testimonial />} />
-          <Route path="/destination" element={<Destination />} />
-          <Route path="/destination/detail" element={<DestDetail />} />
-          <Route path="/destination/tourguide/detail" element={<TourGuideDetail />} />
-        </Routes>
-      </Router>
+      <LoginProvider>
+        <GlobalStyles />
+        <Router>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup-tourist" element={<SignupTourist />} />
+            <Route path="/signup-tourguide" element={<SignupTourGuide />} />
+            <Route path="/testimonial" element={<Testimonial />} />
+            <Route path="/destination" element={<Destination />} />
+
+            <Route path="/city" element={<CityList />} />
+            <Route path="/city/:cityName" element={<Destination />} />
+            <Route path="/destination/detail/:id" element={<DestDetail />} />
+            <Route
+              path="/destination/tourguide/detail"
+              element={<TourGuideDetail />}
+            />
+          </Routes>
+        </Router>
+      </LoginProvider>
     </>
   );
 }

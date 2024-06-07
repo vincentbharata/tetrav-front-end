@@ -92,7 +92,7 @@ const PopularDestinations = () => {
           {cards.slice(0, 2).map((card, index) => (
             <CardColumn key={index}>
               <Card>
-                <CardImage imageSrc={card.imageSrc} />
+                <CardImage imageSrc={card.location.cityImage} />
                 <CardText>
                   <CardHeader>
                     <CardPrice>

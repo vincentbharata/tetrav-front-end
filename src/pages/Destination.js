@@ -97,8 +97,8 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
     if (query) {
       const filtered = cards.filter(
         (card) =>
-          card.placeName.toLowerCase().includes(query.toLowerCase()) ||
-          card.cityName.toLowerCase().includes(query.toLowerCase())
+          card.location.placeName.toLowerCase().includes(query.toLowerCase()) ||
+          card.location.cityName.toLowerCase().includes(query.toLowerCase())
       );
       setSearchResults(filtered);
       setIsSearching(true);
@@ -127,8 +127,8 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
           whileHover="hover"
           animate="rest"
         >
-          <Link to={`/destination/${card.location.cityName}`}>
-            <CardImageContainer imageSrc={card.imageSrc}>
+          <Link to={`/destination/${card.location.placeName}`}>
+            <CardImageContainer imageSrc={card.location.cityImage}>
               <CardRatingContainer>
                 <CardRating>
                   <StarIcon />
@@ -153,7 +153,7 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
               </CardHoverOverlay>
             </CardImageContainer>
             <CardText>
-              <CardTitle>{card.location.cityName}</CardTitle>
+              <CardTitle>{card.location.placeName}</CardTitle>
               <CardContent>{card.location.cityState}</CardContent>
               <CardPrice>From ${card.price}</CardPrice>
             </CardText>
@@ -202,8 +202,6 @@ const AllDestinations = ({ heading = "All Destinations" }) => {
                   onChange={handleInputChange}
                   css={tw`border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-primary-500 mx-auto w-full sm:w-2/3 lg:w-1/2 mb-4`}
                 />
-              </form>
-              <form onSubmit={handleSearch} css={tw`flex items-center`}>
                 <button
                   type="submit"
                   css={tw`block mx-auto mt-4 px-24 py-3 bg-primary-500 text-white rounded-full hover:bg-primary-700 focus:outline-none focus:bg-primary-700`}

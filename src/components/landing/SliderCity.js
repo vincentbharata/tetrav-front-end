@@ -112,7 +112,7 @@ export default () => {
         <CardSlider ref={setSliderRef} {...sliderSettings}>
           {cards.map((card, index) => (
             <Card key={index}>
-              <CardImage imageSrc={card.imageSrc} />
+              <CardImage imageSrc={card.location.cityImage} />
               <TextInfo>
                 <container>
                   <cityName>{card.location.cityName}</cityName>

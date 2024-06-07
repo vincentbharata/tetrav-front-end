@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import Slider from "react-slick";
 import styled from "styled-components";
@@ -10,6 +10,7 @@ import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/che
 import { ReactComponent as SvgDecoratorBlob1 } from "../../images/svg-decorator-blob-4.svg";
 import { ReactComponent as SvgDecoratorBlob2 } from "../../images/svg-decorator-blob-5.svg";
 import "slick-carousel/slick/slick.css";
+import {useLocationState}  from "helpers/LocationContext";
 
 const Text = tw.div`text-[50px] font-bold ml-8 mt-4`;
 const TextTemp = tw.div`text-[65px] font-bold ml-8 mt-4`;
@@ -41,12 +42,13 @@ const DecoratorBlob2 = tw(
 export default function WeatherApp() {
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
+  const {location} = useLocationState()
 
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
         const apiKey = "990e5659d920b604e3357ec4172ba684"; // Replace with your OpenWeather API key
-        const city = "Medan"; // Replace with your desired city
+        const city = location.location.cityName; // Replace with your desired city
         const weatherResponse = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`);
         const forecastResponse = await axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`);
 
