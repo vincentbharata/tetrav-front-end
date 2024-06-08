@@ -12,7 +12,7 @@ import DestDetail from "pages/DestinationDetail.js";
 import TourGuideDetail from "pages/TourGuideDetail";
 import CityList from "pages/CityList";
 import { LoginProvider } from "helpers/LoginContext";
-
+import CheckoutFormDetail from "pages/App";
 
 export default function App() {
   return (
@@ -35,6 +35,8 @@ export default function App() {
               path="/destination/tourguide/detail"
               element={<TourGuideDetail />}
             />
+            <Route path="/paymentDetail" element={<CheckoutFormDetail />} />
+
           </Routes>
         </Router>
       </LoginProvider>
