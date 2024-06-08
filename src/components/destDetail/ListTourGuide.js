@@ -9,6 +9,7 @@ import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chev
 import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
 import axios from "axios";
 import { useLocationState } from "helpers/LocationContext";
+import { useNavigate } from "react-router-dom";
 
 const Container = tw.div`relative`;
 const Content = tw.div`max-w-screen-xl mx-auto py-10`;
@@ -63,6 +64,10 @@ export default () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { location } = useLocationState();
+  const navigate = useNavigate();
+  console.log(location);
+  
 
   const sliderSettings = {
     arrows: false,
@@ -83,14 +88,12 @@ export default () => {
     ],
   };
 
-  const { location } = useLocationState();
-  console.log(location);
 
   useEffect(() => {
     if (location && location.location && location.location.cityName) {
       axios
         .get(
-          `http://localhost:8080/api/tour-guide/${location.location.cityName}`
+          `http://localhost:8080/api/tour-guide/location/${location.location.cityName}`
         )
         .then((response) => {
           console.log(response.data);
@@ -137,12 +140,12 @@ export default () => {
                         <IconContainer>
                           <LocationIcon />
                         </IconContainer>
-                        <Text>{card.user.tourLocation}</Text>
+                        <Text>{card.tourLocation}</Text>
                       </IconWithText>
                     </TitleReviewContainer>
-                    <Description>{card.user.tourDesc}</Description>
+                    <Description>{card.tourDesc}</Description>
                   </TextInfo>
-                  <PrimaryButton>Book Now</PrimaryButton>
+                  <PrimaryButton onClick={()=> navigate(`/destination/tourguide/detail/${location.location.id}/${card.id}`)}>Book Now</PrimaryButton>
                 </Card>
               ))}
             </CardSlider>

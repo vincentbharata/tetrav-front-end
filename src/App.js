@@ -32,7 +32,7 @@ export default function App() {
             <Route path="/city/:cityName" element={<Destination />} />
             <Route path="/destination/detail/:id" element={<DestDetail />} />
             <Route
-              path="/destination/tourguide/detail"
+              path="/destination/tourguide/detail/:locationId/:userId"
               element={<TourGuideDetail />}
             />
           </Routes>
