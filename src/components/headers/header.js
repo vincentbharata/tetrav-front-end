@@ -72,9 +72,9 @@ export default ({
 
   const defaultLinks = [
     <NavLinks key={1}>
-      <NavLink href="/#">Home</NavLink>
-      <NavLink href="/#">Booking</NavLink>
-      <NavLink href="/#">Welcome Back {loginData.userName}</NavLink>
+      <NavLink href="/">Home</NavLink>
+      <NavLink href="/booking">Booking</NavLink>
+      <NavLink href="/#">Chat</NavLink>
       {!loginData.isLoggedIn && (
         <NavLink href="/login" tw="lg:ml-12!">
           Login

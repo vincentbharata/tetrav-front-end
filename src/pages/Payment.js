@@ -1,21 +1,19 @@
 // App.js
-import React from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from './CheckoutForm';
-import 'pages/App.css';
 
 // Make sure to replace with your own Stripe public key
-const stripePromise = loadStripe('your_stripe_public_key');
+const stripePromise = loadStripe('pk_test_51L0fDhGcs5kSb2FxB58ynuBgFpQl1hypWJFtT0VJT8Tq6MJXgZEWIkDscFFPDpuDvMhN5Kr50a8WMwvtNbQxzssT003szQG7E0');
 
-function App() {
+function Payment() {
   return (
     <div className="App">
       <Elements stripe={stripePromise}>
-        <CheckoutForm />
+        <CheckoutForm payment={payment} />
       </Elements>
     </div>
   );
 }
 
-export default App;
+export default Payment;

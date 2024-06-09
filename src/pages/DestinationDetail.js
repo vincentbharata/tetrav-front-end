@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useLocationState } from "helpers/LocationContext";
 import Header from "components/headers/header";
-import { Container, ContentWithPadding2Xl } from "components/misc/Layouts";
+import { Container, ContentWithPaddingXl } from "components/misc/Layouts";
 
 export default () => {
   const { location, setLocation } = useLocationState();
@@ -42,15 +42,15 @@ export default () => {
   return (
     <>
       <AnimationRevealPage>
-        <Header roundedHeaderButton={true} />
+        {/* <Header roundedHeaderButton={true} /> */}
         <Container>
-          <ContentWithPadding2Xl>
+          <ContentWithPaddingXl>
             <DestinationDesc location={location} />
             {/* <DestInfo /> */}
             <DestPict location={location} textOnLeft={false} />
             <Forecast location={location} textOnLeft={false} />
             <TourGuideCard location={location} />
-          </ContentWithPadding2Xl>
+          </ContentWithPaddingXl>
         </Container>
       </AnimationRevealPage>
       <Footer />

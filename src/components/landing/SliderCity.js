@@ -114,9 +114,9 @@ export default () => {
             <Card key={index}>
               <CardImage imageSrc={card.location.cityImage} />
               <TextInfo>
-                <container>
-                  <cityName>{card.location.cityName}</cityName>
-                </container>
+                <Container>
+                  <Text>{card.location.cityName}</Text>
+                </Container>
                 <SecondaryInfoContainer>
                   <IconWithText>
                     <IconContainer>

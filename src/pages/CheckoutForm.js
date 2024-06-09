@@ -6,20 +6,20 @@ import 'pages/CheckoutForm.css';
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const location = useLocation();
+  const { payment } = location.state;
 
-  const [items, setItems] = useState([
-    { id: 1, name: 'Item 1', price: 1000 },
-    { id: 2, name: 'Item 2', price: 2000 },
-    { id: 3, name: 'Item 3', price: 3000 },
-  ]);
 
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState(null);
 
   const calculateTotal = () => {
     return items.reduce((total, item) => total + item.price, 0);
   };
+
+  
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -27,8 +27,23 @@ const CheckoutForm = () => {
     if (!stripe || !elements) {
       return;
     }
-
+    const pr = stripe.paymentRequest({
+        country: 'ID',
+        currency: 'idr',
+        total: {
+          label: `Payment-${payment.bookingDate}`,
+          amount: payment.amount,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+      pr.canMakePayment().then(result => {
+        if (result) {
+          setPaymentRequest(pr);
+        }
+      });
     setIsProcessing(true);
+
 
     const cardElement = elements.getElement(CardElement);
 
@@ -38,7 +53,7 @@ const CheckoutForm = () => {
       billing_details: {
         name,
         email,
-      },
+      }
     });
 
     if (error) {
