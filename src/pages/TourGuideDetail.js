@@ -102,7 +102,8 @@ export default () => {
       bookingDate : formData.datePicker+" "+formData.timePicker
     }
     navigate('/paymentDetail',{state:{
-      payment : finalForm
+      payment : finalForm,
+      tourGuide : tourGuide
     }});
   };
   console.log(tourGuide);

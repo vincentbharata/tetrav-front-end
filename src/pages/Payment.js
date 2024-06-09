@@ -10,7 +10,7 @@ function Payment() {
   return (
     <div className="App">
       <Elements stripe={stripePromise}>
-        <CheckoutForm payment={payment} />
+        <CheckoutForm stripe={stripePromise} />
       </Elements>
     </div>
   );
