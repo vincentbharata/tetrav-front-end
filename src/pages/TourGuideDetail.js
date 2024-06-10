@@ -15,6 +15,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import Header from "components/headers/header.js";
 import useTourGuideDetailHandler from "handler/TourGuideDetailHandler";
 import { LoginContext } from "helpers/LoginContext";
+import { Elements, useStripe } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 const HeadingRow = tw.div`flex`;
 const Heading = tw(SectionHeading)`text-gray-900 text-3xl`;
@@ -67,123 +69,176 @@ const Form = tw.form`mx-auto max-w-md`;
 
 export default () => {
   const [visible] = useState(7);
+  const stripePromise = loadStripe(
+    "pk_test_51L0fDhGcs5kSb2FxB58ynuBgFpQl1hypWJFtT0VJT8Tq6MJXgZEWIkDscFFPDpuDvMhN5Kr50a8WMwvtNbQxzssT003szQG7E0"
+  );
+  const stripe = useStripe();
   const [total, setTotal] = useState(0);
   const [qty, setQty] = useState(1);
   const { tourGuide } = useTourGuideDetailHandler();
-  const {userId,locationId} = useParams();
-  const {loginData} = useContext(LoginContext);
+  const { userId, locationId } = useParams();
+  const { loginData } = useContext(LoginContext);
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
-    datePicker:'',
-    timePicker:'',
-    qty: 1
-  })
+    datePicker: "",
+    timePicker: "",
+    qty: 1,
+  });
   const TotalText = ({ total }) => {
-    const formatter = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 2
+    const formatter = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 2,
     });
-  
+
     const formattedPrice = formatter.format(total);
-  
+
     return <PriceText>Price: {formattedPrice}</PriceText>;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const finalForm = {
-      tourGuideId : userId,
-      locationId : locationId,
-      userId : loginData.id,
-      amount : total,
-      qty : formData.qty,
-      bookingDate : formData.datePicker+" "+formData.timePicker
+      tourGuideId: userId,
+      locationId: locationId,
+      userId: loginData.id,
+      amount: total,
+      qty: formData.qty,
+      bookingDate: formData.datePicker + " " + formData.timePicker,
+    };
+
+    if (!stripe) {
+      return;
     }
-    navigate('/paymentDetail',{state:{
-      payment : finalForm,
-      tourGuide : tourGuide
-    }});
+    const response = await axios.post(
+      "https://api.stripe.com/v1/checkout/sessions",
+      {
+        payment_method_types: ["card"],
+        line_items: [
+          {
+            price_data: {
+              currency: "idr",
+              product_data: {
+                name: tourGuide.tourLocation,
+              },
+              unit_amount: tourGuide.tourPrice * 100, // Stripe expects amount in cents
+            },
+            quantity: finalForm.qty,
+          },
+        ],
+        mode: "payment",
+        success_url: "http://localhost:3000/success",
+        cancel_url: "http://localhost:3000/cancel",
+      },
+      {
+        headers: {
+          Authorization: `Bearer sk_test_51L0fDhGcs5kSb2FxmqjiwT0PZSK3w0Sal10lG3zwJXNkjwtRR0z2hTgZOWZnGZZSk6YyCQB4x8yFkJ23ajGdvpZy00lTn7HAn3`, // Replace with your Stripe secret key
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    );
+
+    const sessionId = response.data.id;
+
+    const { error } = await stripe.redirectToCheckout({ sessionId });
+    if (error) {
+      console.error(error);
+      return;
+    }
   };
   console.log(tourGuide);
-  useEffect(()=> {
-    console.log(qty, tourGuide.tourPrice)
-    setTotal(qty*tourGuide.tourPrice);
-  },[qty, tourGuide.tourPrice]);
+  useEffect(() => {
+    console.log(qty, tourGuide.tourPrice);
+    setTotal(qty * tourGuide.tourPrice);
+  }, [qty, tourGuide.tourPrice]);
   return (
     <>
-      <AnimationRevealPage>
-        <Header roundedHeaderButton={true} />
-        <Container>
-          <ContentWithPaddingXl>
-            <HeadingRow>
-              <Heading>
-                Meet your tour guide {tourGuide.user.firstName} {tourGuide.user.lastName}
-              </Heading>
-            </HeadingRow>
-            <Posts>
-              {/* {tourGuide.slice(0, visible).map((post, index) => ( */}
-              <PostContainer key={tourGuide.id}>
-                <Post>
-                  <Image imageSrc={tourGuide.user.image} />
-                  <Border>
-                    <Form onSubmit={handleSubmit}>
-                      <Input
-                        type="date"
-                        fullWidth
-                        value={formData.datePicker}
-                        onChange={(e)=> setFormData({...formData, datePicker: e.target.value})}
-                      />
-                      <Input
-                        type="time"
-                        fullWidth
-                        value={formData.timePicker}
-                        onChange={(e)=> setFormData({...formData, timePicker: e.target.value})}
-                      />
+      <Elements stripe={stripePromise}>
+        <AnimationRevealPage>
+          <Header roundedHeaderButton={true} />
+          <Container>
+            <ContentWithPaddingXl>
+              <HeadingRow>
+                <Heading>
+                  Meet your tour guide {tourGuide.user.firstName}{" "}
+                  {tourGuide.user.lastName}
+                </Heading>
+              </HeadingRow>
+              <Posts>
+                {/* {tourGuide.slice(0, visible).map((post, index) => ( */}
+                <PostContainer key={tourGuide.id}>
+                  <Post>
+                    <Image imageSrc={tourGuide.user.image} />
+                    <Border>
+                      <Form onSubmit={handleSubmit}>
+                        <Input
+                          type="date"
+                          fullWidth
+                          value={formData.datePicker}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              datePicker: e.target.value,
+                            })
+                          }
+                        />
+                        <Input
+                          type="time"
+                          fullWidth
+                          value={formData.timePicker}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              timePicker: e.target.value,
+                            })
+                          }
+                        />
                         <Input
                           type="number"
                           placeholder="Choose quantity"
                           value={formData.qty}
-                          onChange={(e)=>{
-                            setFormData({...formData, qty: e.target.value});
+                          onChange={(e) => {
+                            setFormData({ ...formData, qty: e.target.value });
                             setQty(e.target.value);
-                          } }
+                          }}
                         />
-                      <BookButton onClick={handleSubmit}>
-                        Book Now
-                      </BookButton>
-                    </Form>
-                    
-                    <PriceBorder></PriceBorder>
-                    <TotalText total={total}/>
-                  </Border>
-                </Post>
-              </PostContainer>
-              {/* ))} */}
-              <Test>
-                <TourGuideName>{tourGuide.user.firstName} {tourGuide.user.lastName}, Your Tour Guide</TourGuideName>
-                <ChatButton>Chat</ChatButton>
-              </Test>
-              <Languages>I can speak:{tourGuide.tourLanguage}</Languages>
-              <TourGuideName>About Me</TourGuideName>
-              <Languages>{tourGuide.tourDesc}</Languages>
-              <HeadingBorder></HeadingBorder>
-              <TourGuideName>Meeting Point</TourGuideName>
-              <Test>
-                <LocationIcon />
-                <LocationCheckpoint>
-                  {tourGuide.tourLocation}
-                </LocationCheckpoint>
-              </Test>
-              <TextInformation>
-                (for detail location and time you can contact your tour guide)
-              </TextInformation>
-            </Posts>
-          </ContentWithPaddingXl>
-        </Container>
-      </AnimationRevealPage>
-      <Footer />
+                        <BookButton onClick={handleSubmit}>Book Now</BookButton>
+                      </Form>
+
+                      <PriceBorder></PriceBorder>
+                      <TotalText total={total} />
+                    </Border>
+                  </Post>
+                </PostContainer>
+                {/* ))} */}
+                <Test>
+                  <TourGuideName>
+                    {tourGuide.user.firstName} {tourGuide.user.lastName}, Your
+                    Tour Guide
+                  </TourGuideName>
+                  <ChatButton>Chat</ChatButton>
+                </Test>
+                <Languages>I can speak:{tourGuide.tourLanguage}</Languages>
+                <TourGuideName>About Me</TourGuideName>
+                <Languages>{tourGuide.tourDesc}</Languages>
+                <HeadingBorder></HeadingBorder>
+                <TourGuideName>Meeting Point</TourGuideName>
+                <Test>
+                  <LocationIcon />
+                  <LocationCheckpoint>
+                    {tourGuide.tourLocation}
+                  </LocationCheckpoint>
+                </Test>
+                <TextInformation>
+                  (for detail location and time you can contact your tour guide)
+                </TextInformation>
+              </Posts>
+            </ContentWithPaddingXl>
+          </Container>
+        </AnimationRevealPage>
+        <Footer />
+      </Elements>
     </>
   );
 };
