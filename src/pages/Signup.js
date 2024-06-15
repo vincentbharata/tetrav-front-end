@@ -15,6 +15,7 @@ const Container = tw(
 )`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
 const MainContainer = tw.div`lg:w-1/2 xl:w-5/12 p-6 sm:p-12`;
+const InputContainer = tw.div`flex-auto my-5 px-1`;
 const LogoLink = tw.a``;
 const LogoImage = tw.img`h-12 mx-auto`;
 const MainContent = tw.div`mt-12 flex flex-col items-center`;
@@ -47,7 +48,7 @@ const useSignup = (initialState) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "phoneNumber") {
-      const sanitizedValue = value.replace(/\D/g, '');
+      const sanitizedValue = value.replace(/\D/g, "");
       setFormData({ ...formData, [name]: sanitizedValue });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -59,9 +60,12 @@ const useSignup = (initialState) => {
     setIsSubmitting(true);
     setError(null);
     try {
-      const response = await axios.post("http://localhost:8080/api/auth/register", formData);
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/register",
+        formData
+      );
       console.log("Signup successful:", response.data);
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       console.error("Signup failed:", error);
       setError(error.response?.data?.message || "Signup failed");
@@ -95,6 +99,7 @@ export default ({
       lastName: "",
       username: "",
       email: "",
+      phoneNumber: "",
       password: "",
       confirmPassword: "",
     });
@@ -111,20 +116,24 @@ export default ({
               <Heading>{headingText}</Heading>
               <FormContainer>
                 <MiniForm>
-                  <Input
-                    type="text"
-                    name="firstName"
-                    placeholder="First Name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                  />
-                  <Input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                  />
+                  <InputContainer>
+                    <Input
+                      type="text"
+                      name="firstName"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
+                  </InputContainer>
+                  <InputContainer>
+                    <Input
+                      type="text"
+                      name="lastName"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                  </InputContainer>
                 </MiniForm>
                 <Form onSubmit={handleSubmit}>
                   <Input
@@ -198,4 +207,3 @@ export default ({
     </AnimationRevealPage>
   );
 };
-
