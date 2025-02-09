@@ -1,4 +1,4 @@
-**Tetrav - Personal Tour Guide Booking Application**
+# Tetrav - Personal Tour Guide Booking Application
 
 Tetrav is a full-stack web application designed to help you book personal tour guides with ease. The project utilizes React.js and Tailwind CSS for the frontend, while Java Spring Boot powers the backend.
 
